@@ -23,3 +23,7 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-06-23**:
   * **Decision**: Applied a handcrafted, minimal "Catppuccin Mocha" inspired color scheme directly to the status bar.
   * **Reasoning**: The default tmux green is notoriously harsh and outdated. Applying a modern palette (deep dark background with soft blue accents) directly in the config provides a sleek aesthetic without needing to install heavy third-party theme plugins.
+
+* **2026-06-23**:
+  * **Decision**: Mapped `v` and `y` in copy mode to emulate Vim visual selection and yank, and integrated them with the Linux system clipboard (`xclip`).
+  * **Reasoning**: By default, tmux has clunky copy bindings (like Space and Enter) and only copies to its internal buffer. This change ensures that when you copy text in tmux, it instantly goes to your OS clipboard so you can paste it in your browser or other native apps.
