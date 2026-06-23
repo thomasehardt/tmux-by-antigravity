@@ -15,3 +15,7 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-06-23**: 
   * **Decision**: Applied a "Minimum Viable Configuration" including Mouse Support, Base-1 Indexing, `Ctrl+a` Prefix, intuitive splits (`|` and `-`), and Vi-mode.
   * **Reasoning**: Creates a highly productive, sane baseline. `Ctrl+a` is ergonomic; 1-based indexing aligns with the physical keyboard; and intuitive splits are easier to remember.
+
+* **2026-06-23**:
+  * **Decision**: Added Vim-like pane navigation (`Prefix + h/j/k/l`) and repeatable pane resizing (`Prefix + H/J/K/L`).
+  * **Reasoning**: A major best-practice for Vim users to maintain muscle memory across the terminal. Using the `-r` flag for resizing allows holding the resize keys without repeatedly having to hit the prefix.
