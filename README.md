@@ -19,3 +19,7 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-06-23**:
   * **Decision**: Added Vim-like pane navigation (`Prefix + h/j/k/l`) and repeatable pane resizing (`Prefix + H/J/K/L`).
   * **Reasoning**: A major best-practice for Vim users to maintain muscle memory across the terminal. Using the `-r` flag for resizing allows holding the resize keys without repeatedly having to hit the prefix.
+
+* **2026-06-23**:
+  * **Decision**: Applied a handcrafted, minimal "Catppuccin Mocha" inspired color scheme directly to the status bar.
+  * **Reasoning**: The default tmux green is notoriously harsh and outdated. Applying a modern palette (deep dark background with soft blue accents) directly in the config provides a sleek aesthetic without needing to install heavy third-party theme plugins.
