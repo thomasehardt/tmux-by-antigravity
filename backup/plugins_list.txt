@@ -1,0 +1,8 @@
+The following plugins were enabled in the previous Oh-My-Tmux configuration:
+
+- tmux-plugins/tmux-copycat
+
+The following were commented out / disabled:
+- tmux-plugins/tmux-cpu
+- tmux-plugins/tmux-resurrect
+- tmux-plugins/tmux-continuum (though continuum-restore was set to 'on')
