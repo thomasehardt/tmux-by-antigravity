@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+INSTALL_DIR="$HOME/.local/share/tmux-mgr"
+
+usage() {
+    cat <<EOF
+tmux-mgr - Manage your tmux-by-antigravity setup
+
+Commands:
+  install   Install config, backing up existing files
+  update    Fetch latest config from GitHub and reload tmux
+  edit      Open the tmux.conf in your \$EDITOR
+  status    Check the status of your installation
+EOF
+}
+
+backup_file() {
+    local target="$1"
+    local backup_dir="$2"
+    if [ -e "$target" ] || [ -L "$target" ]; then
+        local base
+        base=$(basename "$target")
+        echo "   Backing up $target to $backup_dir/$base"
+        mv "$target" "$backup_dir/$base"
+    fi
+}
+
+cmd_install() {
+    echo "=> Installing tmux configuration..."
+    local backup_dir="$HOME/.tmux-backup-$(date +%Y%m%d_%H%M%S)"
+    
+    # Check if existing .tmux.conf or .tmux/ is not already our symlink
+    local need_backup=false
+    if [ -e "$HOME/.tmux.conf" ] && [ "$(readlink "$HOME/.tmux.conf" || true)" != "$INSTALL_DIR/tmux.conf" ]; then
+        need_backup=true
+    fi
+    if [ -e "$HOME/.tmux" ] && [ ! -d "$HOME/.tmux/scripts" ]; then
+        need_backup=true
+    fi
+
+    if $need_backup; then
+        echo "=> Found existing tmux config. Creating backup in $backup_dir"
+        mkdir -p "$backup_dir"
+        backup_file "$HOME/.tmux.conf" "$backup_dir"
+        backup_file "$HOME/.tmux" "$backup_dir"
+    fi
+
+    echo "=> Setting up symlinks..."
+    mkdir -p "$HOME/.tmux"
+    ln -sf "$INSTALL_DIR/tmux.conf" "$HOME/.tmux.conf"
+    
+    # Using rm -rf and then ln -s is the most cross-platform way to update symlinked dirs
+    rm -rf "$HOME/.tmux/scripts"
+    ln -s "$INSTALL_DIR/scripts" "$HOME/.tmux/scripts"
+    
+    ln -sf "$INSTALL_DIR/cheatsheet.md" "$HOME/.tmux/cheatsheet.md"
+    
+    rm -rf "$HOME/.tmux/backup"
+    ln -s "$INSTALL_DIR/backup" "$HOME/.tmux/backup"
+
+    echo "=> Installation complete!"
+    echo "=> You can now start tmux. Use 'tmux-mgr update' to pull future changes."
+}
+
+cmd_update() {
+    echo "=> Updating tmux-mgr repository..."
+    git -C "$INSTALL_DIR" pull
+    
+    # Run install again just to ensure symlinks are correct
+    cmd_install
+    
+    if command -v tmux >/dev/null 2>&1 && tmux info &> /dev/null; then
+        echo "=> Reloading active tmux configuration..."
+        tmux source-file "$HOME/.tmux.conf"
+        echo "=> Reloaded."
+    fi
+}
+
+cmd_edit() {
+    local editor="${EDITOR:-nano}"
+    if command -v vim >/dev/null 2>&1; then
+        editor="${EDITOR:-vim}"
+    fi
+    "$editor" "$INSTALL_DIR/tmux.conf"
+}
+
+cmd_status() {
+    echo "tmux-mgr installation status:"
+    echo "  Install Dir: $INSTALL_DIR"
+    if [ -d "$INSTALL_DIR" ]; then
+        echo "  Current branch: $(git -C "$INSTALL_DIR" branch --show-current 2>/dev/null || echo 'unknown')"
+        echo "  Latest commit: $(git -C "$INSTALL_DIR" log -1 --format="%h - %s" 2>/dev/null || echo 'unknown')"
+    else
+        echo "  Status: Not cloned yet."
+    fi
+    if [ "$(readlink "$HOME/.tmux.conf" || true)" == "$INSTALL_DIR/tmux.conf" ]; then
+        echo "  Config Linked: Yes"
+    else
+        echo "  Config Linked: No (Run 'tmux-mgr install')"
+    fi
+}
+
+if [ $# -eq 0 ]; then
+    usage
+    exit 1
+fi
+
+case "$1" in
+    install) cmd_install ;;
+    update)  cmd_update ;;
+    edit)    cmd_edit ;;
+    status)  cmd_status ;;
+    *)       usage; exit 1 ;;
+esac
