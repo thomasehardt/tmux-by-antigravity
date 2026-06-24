@@ -3,8 +3,8 @@ set -euo pipefail
 
 echo "=> Testing keystroke bindings in tmux config..."
 
-# Start a detached tmux server with the test config using a custom socket
-tmux -L test_sock -f /home/tester/tmux-config-repo/tmux.conf new-session -d -s test_keystrokes
+CONFIG_FILE="$(cd "$(dirname "$0")/.." && pwd)/tmux.conf"
+tmux -L test_sock -f "$CONFIG_FILE" new-session -d -s test_keystrokes
 
 MISSING_KEYS=0
 
