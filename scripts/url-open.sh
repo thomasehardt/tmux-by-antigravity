@@ -2,7 +2,20 @@
 # Scrape URLs out of the current pane's visible scrollback, pick one with fzf,
 # and open it with the OS default browser/handler.
 set -euo pipefail
-urls=$(tmux capture-pane -p -J -S -3000 \
+
+if ! command -v fzf >/dev/null 2>&1; then
+  echo "fzf is not installed. Please install it to use this feature."
+  read -r -p "Press Enter to close..."
+  exit 1
+fi
+target_pane="${1:-}"
+if [ -n "$target_pane" ]; then
+  pane_arg="-t $target_pane"
+else
+  pane_arg="-p"
+fi
+
+urls=$(tmux capture-pane $pane_arg -p -J -S -3000 \
   | grep -oE '(https?|ftp|file)://[A-Za-z0-9._~:/?#@!$&'\''()*+,;=%-]+' \
   | sed -E 's/[).,;:!?]+$//' \
   | sort -u || true)
