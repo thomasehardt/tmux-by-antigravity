@@ -7,6 +7,12 @@
 # (switch-client) and from a bare shell (attach).
 set -euo pipefail
 
+if ! command -v fzf >/dev/null 2>&1; then
+  echo "fzf is not installed. Please install it to use this feature."
+  read -r -p "Press Enter to close..."
+  exit 1
+fi
+
 # Directories whose immediate children are projects. Only existing ones are used.
 roots=("$HOME/code" "$HOME/dev" "$HOME/projects" "$HOME/work" "$HOME/src" "$HOME/.config")
 dirs=()

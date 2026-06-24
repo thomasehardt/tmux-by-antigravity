@@ -2,6 +2,12 @@
 # Scrape URLs out of the current pane's visible scrollback, pick one with fzf,
 # and open it with the OS default browser/handler.
 set -euo pipefail
+
+if ! command -v fzf >/dev/null 2>&1; then
+  echo "fzf is not installed. Please install it to use this feature."
+  read -r -p "Press Enter to close..."
+  exit 1
+fi
 target_pane="${1:-}"
 if [ -n "$target_pane" ]; then
   pane_arg="-t $target_pane"
