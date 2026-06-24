@@ -39,6 +39,8 @@ Send a literal Ctrl-a to the program inside with `Ctrl-a Ctrl-a`.
 | --- | --- |
 | `prefix \` | Scratch shell (persistent; keeps whatever you leave running) |
 | `prefix g` | Git overview for the current repo, then a shell |
+| `prefix G` | Full-screen lazygit in a popup |
+| `prefix b` | System monitor (btm/htop/top) in a popup |
 | `prefix u` | Pick a URL off the screen and open it |
 
 ## Copy and paste
@@ -46,6 +48,7 @@ Send a literal Ctrl-a to the program inside with `Ctrl-a Ctrl-a`.
 | Key | Action |
 | --- | --- |
 | `prefix [` | Enter copy mode |
+| `prefix F` | Fast, hint-based text selection/copying directly from the screen |
 | `v` | Start selection (in copy mode) |
 | `y` or `Enter` | Copy selection to the system clipboard |
 | mouse drag | Copy selection to the system clipboard |
@@ -59,6 +62,7 @@ Copy works on any OS: macOS, Linux (Wayland/X11), or WSL, and over SSH via OSC 5
 | Key | Action |
 | --- | --- |
 | `prefix S` | Broadcast typing to every pane (SYNC badge shows when on) |
+| `F12` | Toggle "Inception Mode" (passes all keys to a nested tmux/SSH session) |
 | `prefix P` | Log this pane to ~/.tmux/logs/ (toggle) |
 | `prefix m` | Actions menu (everything above, clickable) |
 | `prefix I` | This cheatsheet |
