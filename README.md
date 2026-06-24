@@ -1,6 +1,23 @@
 # Tmux Configuration
 
-This repository contains my personal, custom tmux configuration.
+This repository contains my personal, custom tmux configuration, managed by a custom `tmux-mgr` CLI tool.
+
+## Installation
+
+The easiest way to install this configuration is using the bootstrap script. It will clone the repository into a hidden, safe directory (`~/.local/share/tmux-mgr`), safely back up any of your existing tmux configuration, and install the `tmux-mgr` CLI tool.
+
+Run this command in your terminal:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/thomasehardt/tmux-by-antigravity/main/install.sh | bash
+```
+
+Once installed, you can use the `tmux-mgr` command to manage your setup:
+- `tmux-mgr update`: Fetch the latest config from GitHub and reload tmux.
+- `tmux-mgr edit`: Open the `tmux.conf` file in your editor.
+- `tmux-mgr status`: Check your installation status.
+
+*Note: Make sure `~/.local/bin` is in your `$PATH`!*
 
 ## Documentation & Decision Log
 
