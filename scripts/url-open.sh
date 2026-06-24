@@ -27,8 +27,8 @@ fi
 choice=$(printf '%s\n' "$urls" | fzf --reverse --prompt='open url> ' --height=100% --no-multi) || exit 0
 if [ -n "${choice:-}" ]; then
   if command -v open >/dev/null 2>&1; then
-    open "$choice"
+    tmux run-shell -b "open '$choice' >/dev/null 2>&1"
   elif command -v xdg-open >/dev/null 2>&1; then
-    xdg-open "$choice"
+    tmux run-shell -b "xdg-open '$choice' >/dev/null 2>&1"
   fi
 fi
