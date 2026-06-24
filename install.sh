@@ -4,7 +4,7 @@ set -euo pipefail
 # This script bootstraps the tmux-mgr setup. It clones the repo into a hidden
 # safe directory and links the CLI tool into the user's PATH.
 
-REPO_URL="https://github.com/thomasehardt/tmux-by-antigravity.git"
+REPO_URL="${REPO_URL:-https://github.com/thomasehardt/tmux-by-antigravity.git}"
 INSTALL_DIR="$HOME/.local/share/tmux-mgr"
 BIN_DIR="$HOME/.local/bin"
 
