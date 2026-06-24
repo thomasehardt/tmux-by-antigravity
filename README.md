@@ -52,3 +52,19 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-06-24**:
   * **Decision**: Refactored `battery.sh`, `sys-stats.sh`, and `url-open.sh` to dynamically detect the OS and use Linux-compatible tools (`xdg-open`, `/sys/class/power_supply/`, `uptime`/`free`) when macOS native binaries are unavailable.
   * **Reasoning**: Ensures the configuration is truly cross-platform and can be seamlessly deployed on macOS, Linux desktops, or headless Linux servers without breaking the status bar or custom keybindings.
+
+* **2026-06-24**:
+  * **Decision**: Added Tmux Plugin Manager (TPM) and integrated `tmux-fingers`.
+  * **Reasoning**: Allows fast, hint-based text selection and copying directly from the screen (`Prefix + F`). TPM handles installation safely, and `tmux-fingers` is chosen over `tmux-thumbs` for its cross-platform ease (doesn't require a rust toolchain by default).
+  
+* **2026-06-24**:
+  * **Decision**: Enabled terminal overrides for Neovim/Vim undercurls.
+  * **Reasoning**: Enhances the visual experience for modern editors and language servers (LSP) by drawing squiggly colored underlines for diagnostics (`Smulx=\E[4::%p1%dm`).
+
+* **2026-06-24**:
+  * **Decision**: Implemented an "Inception" mode toggled via `F12`.
+  * **Reasoning**: Turns off the outer tmux prefix and bindings, visually changing the status bar color, allowing all key presses to pass through seamlessly to nested SSH/tmux sessions.
+
+* **2026-06-24**:
+  * **Decision**: Created dedicated centered popup bindings for TUI apps (e.g., `Prefix + G` for lazygit, `Prefix + b` for btm/htop).
+  * **Reasoning**: Quick, non-disruptive access to full-screen system management and git workflows without disturbing the current pane layout.
