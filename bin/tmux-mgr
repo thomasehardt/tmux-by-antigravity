@@ -201,7 +201,15 @@ cmd_ask() {
     
     local prompt="Answer this question about tmux briefly and accurately: $query"
     
+    local output_mode=""
     if [ -n "${TMUX:-}" ]; then
+        output_mode="$(tmux show-option -gv @llm_output_mode 2>/dev/null || true)"
+    fi
+    if [ -z "$output_mode" ]; then
+        output_mode="${TMUX_MGR_LLM_OUTPUT_MODE:-popup}"
+    fi
+    
+    if [ -n "${TMUX:-}" ] && [ "$output_mode" != "inline" ]; then
         local tmp_script
         tmp_script=$(mktemp)
         chmod +x "$tmp_script"
