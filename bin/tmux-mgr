@@ -199,7 +199,16 @@ cmd_ask() {
         fi
     fi
     
-    local prompt="Answer this question about tmux briefly and accurately: $query"
+    local template=""
+    if [ -n "${TMUX:-}" ]; then
+        template="$(tmux show-option -gv @llm_prompt_template 2>/dev/null || true)"
+    fi
+    if [ -z "$template" ]; then
+        template="${TMUX_MGR_LLM_PROMPT_TEMPLATE:-Answer this question about tmux briefly and accurately: {{query}}}"
+    fi
+    
+    # Replace {{query}} with the user's actual question
+    local prompt="${template//\{\{query\}\}/$query}"
     
     local output_mode=""
     if [ -n "${TMUX:-}" ]; then
