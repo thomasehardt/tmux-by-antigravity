@@ -14,6 +14,7 @@ Commands:
   status       Check the status of your installation
   menu         Display the interactive tmux actions menu
   cheatsheet   Show the configuration cheatsheet
+  ask <query>  Ask the Antigravity LLM a tmux-related question
 EOF
 }
 
@@ -154,6 +155,40 @@ cmd_cheatsheet() {
     fi
 }
 
+cmd_ask() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: tmux-mgr ask <question>"
+        exit 1
+    fi
+    local query="$*"
+    if ! command -v agy >/dev/null 2>&1; then
+        echo "Error: 'agy' (Antigravity CLI) is not installed or not in PATH."
+        exit 1
+    fi
+    
+    local prompt="Answer this question about tmux briefly and accurately: $query"
+    
+    if [ -n "${TMUX:-}" ]; then
+        local tmp_script
+        tmp_script=$(mktemp)
+        chmod +x "$tmp_script"
+        cat <<EOF > "$tmp_script"
+#!/usr/bin/env bash
+echo "🤖 Asking Antigravity..."
+echo "────────────────────────────────────────"
+agy -p "$prompt"
+echo ""
+echo "────────────────────────────────────────"
+read -n 1 -s -r -p "Press any key to close..."
+rm -f "$tmp_script"
+EOF
+        tmux display-popup -E -w 80% -h 80% "$tmp_script"
+    else
+        echo "🤖 Asking Antigravity..."
+        agy -p "$prompt"
+    fi
+}
+
 if [ $# -eq 0 ]; then
     usage
     exit 1
@@ -166,5 +201,6 @@ case "$1" in
     status)     cmd_status ;;
     menu)       cmd_menu ;;
     cheatsheet) cmd_cheatsheet ;;
+    ask)        shift; cmd_ask "$@" ;;
     *)          usage; exit 1 ;;
 esac
