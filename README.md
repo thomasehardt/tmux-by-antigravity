@@ -68,3 +68,7 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-06-24**:
   * **Decision**: Created dedicated centered popup bindings for TUI apps (e.g., `Prefix + G` for lazygit, `Prefix + b` for btm/htop).
   * **Reasoning**: Quick, non-disruptive access to full-screen system management and git workflows without disturbing the current pane layout.
+
+* **2026-07-17**:
+  * **Decision**: Removed automatic popups for changelogs and cheatsheets on startup, and added commented templates for tmux event hooks in `tmux.conf`.
+  * **Reasoning**: Automatic popups were deemed too noisy and disruptive to workflow. The commented hooks provide users with discoverable, blank-canvas templates for customizing event-driven behaviors (like notifications or logging) without cluttering the baseline configuration.
