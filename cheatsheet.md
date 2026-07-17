@@ -65,8 +65,7 @@ Copy works on any OS: macOS, Linux (Wayland/X11), or WSL, and over SSH via OSC 5
 | `F12` | Toggle "Inception Mode" (passes all keys to a nested tmux/SSH session) |
 | `prefix P` | Log this pane to ~/.tmux/logs/ (toggle) |
 | `prefix m` | Actions menu (everything above, clickable) |
-| `prefix I` | This cheatsheet |
-| `prefix ?` | Full, live key list (auto-generated) |
+| `prefix I` or `?`| This cheatsheet |
 | `prefix r` | Reload config |
 | `prefix t` | Clock |
 
@@ -84,3 +83,5 @@ Copy works on any OS: macOS, Linux (Wayland/X11), or WSL, and over SSH via OSC 5
 - Pane logs: `~/.tmux/logs/`
 - Saved sessions: `~/.tmux/resurrect/last.txt`
 - Backup of the pre-overhaul config: `~/.tmux/backup/tmux.conf.backup`
+
+*Note: To see the full raw, auto-generated list of all tmux internal keybindings, run `tmux list-keys` in any shell.*

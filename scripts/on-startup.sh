@@ -9,3 +9,7 @@ elif [ -f "$HOME/.tmux/.show_changelog" ]; then
     # We want to display the changelog, but we need to pass the file contents to the popup
     tmux display-popup -E -w 80% -h 80% "echo '🎉 Tmux configuration updated!'; echo ''; cat '$HOME/.tmux/.show_changelog'; echo ''; rm -f '$HOME/.tmux/.show_changelog'; read -r -p 'Press Enter to continue...'"
 fi
+
+# Always show a non-intrusive hint in the status bar for 30 seconds.
+# (It will automatically disappear as soon as the user presses any key).
+tmux display-message -d 30000 "💡 Press PREFIX (Ctrl-a) + ? for help"

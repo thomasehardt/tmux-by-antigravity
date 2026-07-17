@@ -4,10 +4,14 @@
 set -euo pipefail
 f="$HOME/.tmux/cheatsheet.md"
 [ -f "$f" ] || { echo "no cheatsheet at $f"; sleep 1; exit 0; }
+export LESSKEYIN="$(mktemp)"
+printf "#command\n\e quit\n" > "$LESSKEYIN"
+trap 'rm -f "$LESSKEYIN"' EXIT
+
 if command -v glow >/dev/null 2>&1; then
-  exec glow -p "$f"
+  glow -p "$f"
 elif command -v bat >/dev/null 2>&1; then
-  exec bat --style=plain --paging=always --language=markdown "$f"
+  bat --style=plain --paging=always --language=markdown "$f"
 else
-  exec less -R "$f"
+  less -R "$f"
 fi
