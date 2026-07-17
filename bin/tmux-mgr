@@ -162,7 +162,16 @@ cmd_ask() {
     fi
     local query="$*"
     
-    local llm_cmd="${TMUX_MGR_LLM_CMD:-}"
+    local llm_cmd=""
+    # 1. Try reading from the active tmux configuration first
+    if [ -n "${TMUX:-}" ]; then
+        llm_cmd="$(tmux show-option -gv @llm_cmd 2>/dev/null || true)"
+    fi
+    
+    # 2. Fall back to environment variable
+    if [ -z "$llm_cmd" ]; then
+        llm_cmd="${TMUX_MGR_LLM_CMD:-}"
+    fi
     if [ -z "$llm_cmd" ]; then
         if command -v agy >/dev/null 2>&1; then
             llm_cmd="agy -p"
