@@ -72,11 +72,8 @@ cmd_install() {
         "$HOME/.tmux/plugins/tpm/bin/install_plugins" || true
     fi
 
-    echo "=> Installation complete!"
-    
-    # Create a local overrides file if it doesn't exist
-    if [ ! -f "$HOME/.tmux.conf.local" ]; then
-        cat <<'EOF' > "$HOME/.tmux.conf.local"
+    # Always generate a fresh example file so users can see all available options
+    cat <<'EOF' > "$HOME/.tmux.conf.local.example"
 # ~/.tmux.conf.local
 # This file is for your machine-specific tmux overrides.
 # It will never be overwritten or clobbered by 'tmux-mgr update'.
@@ -110,8 +107,13 @@ cmd_install() {
 # Must include {{query}} where the actual question should go.
 # set -g @llm_prompt_template "You are a tmux expert. Question: {{query}}"
 EOF
+
+    # Create a local overrides file if it doesn't exist
+    if [ ! -f "$HOME/.tmux.conf.local" ]; then
+        cp "$HOME/.tmux.conf.local.example" "$HOME/.tmux.conf.local"
     fi
     
+    echo "=> Installation complete!"
     echo "=> You can now start tmux. Use 'tmux-mgr update' to pull future changes."
 }
 
