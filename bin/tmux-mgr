@@ -106,7 +106,7 @@ cmd_update() {
         echo ""
         echo "=> Update successful! New changes:"
         echo "────────────────────────────────────────"
-        git -C "$INSTALL_DIR" log ${old_commit}..${new_commit} --oneline --color=always
+        git --no-pager -C "$INSTALL_DIR" log ${old_commit}..${new_commit} --oneline --color=always
         echo "────────────────────────────────────────"
     fi
 }
