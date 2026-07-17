@@ -161,9 +161,19 @@ cmd_ask() {
         exit 1
     fi
     local query="$*"
-    if ! command -v agy >/dev/null 2>&1; then
-        echo "Error: 'agy' (Antigravity CLI) is not installed or not in PATH."
-        exit 1
+    
+    local llm_cmd="${TMUX_MGR_LLM_CMD:-}"
+    if [ -z "$llm_cmd" ]; then
+        if command -v agy >/dev/null 2>&1; then
+            llm_cmd="agy -p"
+        elif command -v gh >/dev/null 2>&1; then
+            llm_cmd="gh copilot suggest -t shell"
+        else
+            echo "Error: No LLM CLI found (checked for 'agy' and 'gh')."
+            echo "Please set the TMUX_MGR_LLM_CMD environment variable."
+            echo "Example: export TMUX_MGR_LLM_CMD='ollama run llama3'"
+            exit 1
+        fi
     fi
     
     local prompt="Answer this question about tmux briefly and accurately: $query"
@@ -172,20 +182,23 @@ cmd_ask() {
         local tmp_script
         tmp_script=$(mktemp)
         chmod +x "$tmp_script"
-        cat <<EOF > "$tmp_script"
+        # Use single quotes around EOF to prevent bash from expanding variables prematurely.
+        # We pass the variables safely using tmux -e flags.
+        cat <<'EOF' > "$tmp_script"
 #!/usr/bin/env bash
-echo "🤖 Asking Antigravity..."
+echo "🤖 Asking LLM (${TMUX_MGR_ACTIVE_CMD})..."
 echo "────────────────────────────────────────"
-agy -p "$prompt"
+# The command might contain spaces (like 'gh copilot'), so we eval it with the quoted prompt
+eval "$TMUX_MGR_ACTIVE_CMD \"\$TMUX_MGR_PROMPT\""
 echo ""
 echo "────────────────────────────────────────"
 read -n 1 -s -r -p "Press any key to close..."
-rm -f "$tmp_script"
+rm -f "$0"
 EOF
-        tmux display-popup -E -w 80% -h 80% "$tmp_script"
+        tmux display-popup -e "TMUX_MGR_ACTIVE_CMD=$llm_cmd" -e "TMUX_MGR_PROMPT=$prompt" -E -w 80% -h 80% "$tmp_script"
     else
-        echo "🤖 Asking Antigravity..."
-        agy -p "$prompt"
+        echo "🤖 Asking LLM ($llm_cmd)..."
+        eval "$llm_cmd \"\$prompt\""
     fi
 }
 
