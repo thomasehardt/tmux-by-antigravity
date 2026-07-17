@@ -8,10 +8,12 @@ usage() {
 tmux-mgr - Manage your tmux-by-antigravity setup
 
 Commands:
-  install   Install config, backing up existing files
-  update    Fetch latest config from GitHub and reload tmux
-  edit      Open the tmux.conf in your \$EDITOR
-  status    Check the status of your installation
+  install      Install config, backing up existing files
+  update       Fetch latest config from GitHub and reload tmux
+  edit         Open the tmux.conf in your \$EDITOR
+  status       Check the status of your installation
+  menu         Display the interactive tmux actions menu
+  cheatsheet   Show the configuration cheatsheet
 EOF
 }
 
@@ -118,15 +120,51 @@ cmd_status() {
     fi
 }
 
+cmd_menu() {
+    if [ -z "${TMUX:-}" ]; then
+        echo "Error: Must be inside a tmux session to display the popup menu."
+        exit 1
+    fi
+    tmux display-menu -T "#[align=centre,fg=#89b4fa,bold] tmux actions " -x C -y C \
+      "Help / Cheatsheet" "?" "display-popup -E -w 80% -h 80% \"$HOME/.tmux/scripts/cheatsheet.sh\"" \
+      "" \
+      "Scratch shell"   "\\" "display-popup -E -w 80% -h 75% -d \"#{pane_current_path}\" \"$HOME/.tmux/scripts/scratch.sh\"" \
+      "Git overview"    "G"  "display-popup -E -w 90% -h 85% -d \"#{pane_current_path}\" \"$HOME/.tmux/scripts/git-overview.sh\"" \
+      "Switch session"  "s"  "display-popup -E -w 50% -h 50% \"$HOME/.tmux/scripts/sessions.sh\"" \
+      "Switch window"   "w"  "display-popup -E -w 70% -h 60% \"$HOME/.tmux/scripts/windows.sh\"" \
+      "Open URL"        "u"  "display-popup -E -w 70% -h 60% \"$HOME/.tmux/scripts/url-open.sh #{pane_id}\"" \
+      "Find project"    "f"  "display-popup -E -w 60% -h 60% \"$HOME/.tmux/scripts/sessionizer.sh\"" \
+      "" \
+      "Toggle sync"     "S"  "setw synchronize-panes" \
+      "Toggle logging"  "P"  "pipe-pane -o \"cat >> \$HOME/.tmux/logs/#{session_name}-#{window_index}.log\"" \
+      "Zoom pane"       "z"  "resize-pane -Z" \
+      "" \
+      "Save sessions"   "C-s" "run-shell \"$HOME/.tmux/scripts/save-sessions.sh\"" \
+      "Restore sessions" "C-r" "run-shell \"$HOME/.tmux/scripts/restore-sessions.sh\"" \
+      "Reload config"   "r"  "source-file ~/.tmux.conf" \
+      "Cheatsheet"      "I"  "display-popup -E -w 80% -h 80% \"$HOME/.tmux/scripts/cheatsheet.sh\"" \
+      "Kill pane"       "x"  "confirm-before -p \"kill pane #P? (y/n)\" kill-pane"
+}
+
+cmd_cheatsheet() {
+    if [ -n "${TMUX:-}" ]; then
+        tmux display-popup -E -w 80% -h 80% "$HOME/.tmux/scripts/cheatsheet.sh"
+    else
+        "$HOME/.tmux/scripts/cheatsheet.sh"
+    fi
+}
+
 if [ $# -eq 0 ]; then
     usage
     exit 1
 fi
 
 case "$1" in
-    install) cmd_install ;;
-    update)  cmd_update ;;
-    edit)    cmd_edit ;;
-    status)  cmd_status ;;
-    *)       usage; exit 1 ;;
+    install)    cmd_install ;;
+    update)     cmd_update ;;
+    edit)       cmd_edit ;;
+    status)     cmd_status ;;
+    menu)       cmd_menu ;;
+    cheatsheet) cmd_cheatsheet ;;
+    *)          usage; exit 1 ;;
 esac
