@@ -76,8 +76,40 @@ cmd_install() {
     
     # Create a local overrides file if it doesn't exist
     if [ ! -f "$HOME/.tmux.conf.local" ]; then
-        echo "# Add your local tmux overrides here (e.g. changing the prefix key)" > "$HOME/.tmux.conf.local"
-        echo "# This file will not be overwritten by tmux-mgr update." >> "$HOME/.tmux.conf.local"
+        cat <<'EOF' > "$HOME/.tmux.conf.local"
+# ~/.tmux.conf.local
+# This file is for your machine-specific tmux overrides.
+# It will never be overwritten or clobbered by 'tmux-mgr update'.
+
+# ==============================================================================
+# Configuration Examples (Uncomment to use)
+# ==============================================================================
+
+# Change the prefix key to something else (e.g. Ctrl-space)
+# unbind C-a
+# set -g prefix C-Space
+# bind C-Space send-prefix
+
+# Disable the startup hint message entirely
+# set -g @enable_startup_hint "off"
+
+# ------------------------------------------------------------------------------
+# LLM Integration (tmux-mgr ask)
+# ------------------------------------------------------------------------------
+
+# Change the underlying CLI tool used when you run 'tmux-mgr ask'.
+# If unset, it auto-detects 'agy -p' or 'gh copilot suggest -t shell'.
+# set -g @llm_cmd "ollama run qwen3:8b"
+# set -g @llm_cmd "claude -p"
+
+# Change where the LLM response is displayed.
+# Options: "popup" (floating window, default) or "inline" (standard out in terminal)
+# set -g @llm_output_mode "inline"
+
+# Change the system prompt template injected before your question.
+# Must include {{query}} where the actual question should go.
+# set -g @llm_prompt_template "You are a tmux expert. Question: {{query}}"
+EOF
     fi
     
     echo "=> You can now start tmux. Use 'tmux-mgr update' to pull future changes."
