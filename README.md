@@ -72,3 +72,7 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-07-17**:
   * **Decision**: Removed automatic popups for changelogs and cheatsheets on startup, and added commented templates for tmux event hooks in `tmux.conf`.
   * **Reasoning**: Automatic popups were deemed too noisy and disruptive to workflow. The commented hooks provide users with discoverable, blank-canvas templates for customizing event-driven behaviors (like notifications or logging) without cluttering the baseline configuration.
+
+* **2026-07-20**:
+  * **Decision**: Modified copy bindings (`y`, `Enter`, and mouse drag) to use `copy-pipe` instead of `copy-pipe-and-cancel`.
+  * **Reasoning**: This prevents tmux from immediately exiting copy mode after yanking text, allowing for multiple copies or continued scrolling without needing to re-enter copy mode.
