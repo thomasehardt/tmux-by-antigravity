@@ -23,3 +23,31 @@ sleep 30
 # Clear the hint
 tmux set-option -g @startup_hint ""
 tmux refresh-client -S
+
+# Check for updates in the background
+if [ "$(tmux show-option -gv @enable_auto_update 2>/dev/null)" != "off" ]; then
+    INSTALL_DIR="$HOME/.local/share/tmux-mgr"
+    LAST_CHECK_FILE="$HOME/.tmux/.tmux-mgr-update"
+    NOW=$(date +%s)
+    
+    if [ -f "$LAST_CHECK_FILE" ]; then
+        LAST_CHECK=$(cat "$LAST_CHECK_FILE")
+    else
+        LAST_CHECK=0
+    fi
+    
+    # Check every 7 days (604800 seconds)
+    if [ $((NOW - LAST_CHECK)) -gt 604800 ]; then
+        if cd "$INSTALL_DIR"; then
+            git fetch origin >/dev/null 2>&1
+            LOCAL_HASH=$(git rev-parse HEAD)
+            REMOTE_HASH=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
+            
+            if [ "$LOCAL_HASH" != "$REMOTE_HASH" ] && [ "$REMOTE_HASH" != "unknown" ]; then
+                tmux set-option -g @update_hint "#[fg=#1e1e2e,bg=#f9e2af,bold] 🚀 tmux-mgr update available! Run 'tmux-mgr update' #[default] "
+                tmux refresh-client -S
+            fi
+            echo "$NOW" > "$LAST_CHECK_FILE"
+        fi
+    fi
+fi
