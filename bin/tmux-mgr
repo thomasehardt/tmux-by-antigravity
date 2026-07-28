@@ -115,13 +115,20 @@ cmd_install() {
 # COPY_MODE_TIMEOUT seconds so you can see your selection, then exits
 # automatically.  Set to 0 to exit immediately (like copy-pipe-and-cancel).
 #
-# This requires the copy-and-timed-exit.sh script (ships with tmux-mgr) and
-# the three bind overrides below.  Uncomment all four lines together.
+# Uncomment all seven lines together to enable.  The copy-mode-cancel.sh
+# script ships with tmux-mgr; #{pane_id} is expanded by tmux before the
+# shell runs, making this reliable on macOS and Linux alike.
 #
 # set-environment -g COPY_MODE_TIMEOUT 3
-# bind -T copy-mode-vi y             send -X copy-pipe "$HOME/.tmux/scripts/copy-and-timed-exit.sh"
-# bind -T copy-mode-vi Enter         send -X copy-pipe "$HOME/.tmux/scripts/copy-and-timed-exit.sh"
-# bind -T copy-mode-vi MouseDragEnd1Pane send -X copy-pipe "$HOME/.tmux/scripts/copy-and-timed-exit.sh"
+# bind -T copy-mode-vi y \
+#   send -X copy-pipe "$HOME/.tmux/scripts/clipboard.sh" \; \
+#   run-shell -b "$HOME/.tmux/scripts/copy-mode-cancel.sh #{pane_id}"
+# bind -T copy-mode-vi Enter \
+#   send -X copy-pipe "$HOME/.tmux/scripts/clipboard.sh" \; \
+#   run-shell -b "$HOME/.tmux/scripts/copy-mode-cancel.sh #{pane_id}"
+# bind -T copy-mode-vi MouseDragEnd1Pane \
+#   send -X copy-pipe "$HOME/.tmux/scripts/clipboard.sh" \; \
+#   run-shell -b "$HOME/.tmux/scripts/copy-mode-cancel.sh #{pane_id}"
 EOF
 
     # Create a local overrides file if it doesn't exist
