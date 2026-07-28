@@ -6,29 +6,14 @@
 # but only if it is still in copy mode (so manual Escape/q is unaffected).
 
 PANE_ID="${1:-}"
-LOG="$HOME/.local/share/tmux-mgr/copy-mode-cancel-debug.log"
-
-echo "[$(date '+%T')] START pane='$PANE_ID' TMUX='$TMUX'" >> "$LOG"
-
-[ -z "$PANE_ID" ] && { echo "[$(date '+%T')] ABORT: no pane_id" >> "$LOG"; exit 0; }
+[ -z "$PANE_ID" ] && exit 0
 
 # Read the timeout from the tmux global environment; fall back to 3 s.
-TIMEOUT_RAW="$(tmux show-environment -g COPY_MODE_TIMEOUT 2>&1)"
-TIMEOUT="$(echo "$TIMEOUT_RAW" | cut -d= -f2)"
+TIMEOUT="$(tmux show-environment -g COPY_MODE_TIMEOUT 2>/dev/null | cut -d= -f2)"
 TIMEOUT="${TIMEOUT:-3}"
-
-echo "[$(date '+%T')] timeout_raw='$TIMEOUT_RAW' timeout='$TIMEOUT'" >> "$LOG"
 
 sleep "$TIMEOUT"
 
-IN_MODE="$(tmux display-message -p -t "$PANE_ID" '#{pane_in_mode}' 2>&1)"
-echo "[$(date '+%T')] in_mode='$IN_MODE'" >> "$LOG"
-
-if echo "$IN_MODE" | grep -q '^1$'; then
-  RESULT="$(tmux send-keys -t "$PANE_ID" q 2>&1)"
-  echo "[$(date '+%T')] cancel result='$RESULT'" >> "$LOG"
-else
-  echo "[$(date '+%T')] SKIP: not in copy mode (or pane gone)" >> "$LOG"
+if tmux display-message -p -t "$PANE_ID" '#{pane_in_mode}' 2>/dev/null | grep -q '^1$'; then
+  tmux send-keys -t "$PANE_ID" q 2>/dev/null || true
 fi
-
-echo "[$(date '+%T')] DONE" >> "$LOG"
