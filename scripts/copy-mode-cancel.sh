@@ -6,8 +6,7 @@
 # but only if it is still in copy mode (so manual Escape/q is unaffected).
 
 PANE_ID="${1:-}"
-LOG="$HOME/.tmux/logs/copy-mode-cancel-debug.log"
-mkdir -p "$(dirname "$LOG")"
+LOG="$HOME/.local/share/tmux-mgr/copy-mode-cancel-debug.log"
 
 echo "[$(date '+%T')] START pane='$PANE_ID' TMUX='$TMUX'" >> "$LOG"
 
