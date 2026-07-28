@@ -25,7 +25,7 @@ IN_MODE="$(tmux display-message -p -t "$PANE_ID" '#{pane_in_mode}' 2>&1)"
 echo "[$(date '+%T')] in_mode='$IN_MODE'" >> "$LOG"
 
 if echo "$IN_MODE" | grep -q '^1$'; then
-  RESULT="$(tmux send-keys -t "$PANE_ID" -X cancel 2>&1)"
+  RESULT="$(tmux send-keys -t "$PANE_ID" q 2>&1)"
   echo "[$(date '+%T')] cancel result='$RESULT'" >> "$LOG"
 else
   echo "[$(date '+%T')] SKIP: not in copy mode (or pane gone)" >> "$LOG"
