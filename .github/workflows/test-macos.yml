@@ -28,3 +28,4 @@ jobs:
         export PATH=$HOME/.local/bin:$PATH
         tmux-mgr status
         bash tests/test-keystrokes.sh
+        bash tests/test-claude-status.sh
