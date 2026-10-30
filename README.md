@@ -19,6 +19,24 @@ Once installed, you can use the `tmux-mgr` command to manage your setup:
 
 *Note: Make sure `~/.local/bin` is in your `$PATH`!*
 
+## Claude Code Tab Badge
+
+Each window running Claude Code shows the session's state on its tab: `…` working, `●` waiting for you, `✓` done, `✗` ended on an error. It has two halves:
+
+- `tmux.conf` draws the badge from the window option `@claude_state`.
+- `claude/tmux-status.sh` is a Claude Code hook that sets `@claude_state`.
+
+To set it up on a new machine:
+
+```bash
+mkdir -p ~/.claude/hooks
+ln -sf ~/.local/share/tmux-mgr/claude/tmux-status.sh ~/.claude/hooks/tmux-status.sh
+```
+
+Then merge the `hooks` entries from `claude/settings-hooks.json` into `~/.claude/settings.json`. If you already have hooks for the same events, add these entries to the existing arrays rather than replacing them. Without the hook, `@claude_state` is never set and the badge renders as nothing.
+
+Test it with `bash tests/test-claude-status.sh` (it uses its own tmux socket, so your sessions are untouched).
+
 ## Documentation & Decision Log
 
 To maintain a clean and understandable configuration, we will document all major additions, keybindings, and plugins here along with the reasoning behind them. We will also ensure the `tmux.conf` file itself remains heavily commented.
@@ -76,3 +94,7 @@ To maintain a clean and understandable configuration, we will document all major
 * **2026-07-20**:
   * **Decision**: Modified copy bindings (`y`, `Enter`, and mouse drag) to use `copy-pipe` instead of `copy-pipe-and-cancel`.
   * **Reasoning**: This prevents tmux from immediately exiting copy mode after yanking text, allowing for multiple copies or continued scrolling without needing to re-enter copy mode.
+
+* **2026-10-30**:
+  * **Decision**: Moved the Claude Code status hook (`claude/tmux-status.sh`) and its `settings.json` entries into this repo, next to the `tmux.conf` badge that reads them, and symlinked `~/.claude/hooks/tmux-status.sh` to it.
+  * **Reasoning**: The badge only works with both halves. Keeping the hook in `~/.claude` alone left it unversioned and unbacked-up, and a new machine would get a badge that never lights up.
